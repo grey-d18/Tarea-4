@@ -1,0 +1,22 @@
+[project]
+name = "tarea-4-agente-socioeconomico"
+version = "0.1.0"
+description = "Agente de investigación socioeconómica: MCP del BCRP + Skills de ENAHO (INEI)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=4,<5",
+    "httpx",
+    "pandas",
+    "pyarrow",
+    "geopandas",
+    "matplotlib",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+# Las pruebas viven en mcp/ e importan "from server import mcp".
+# Ojo: mcp/ NO debe tener __init__.py, para no tapar el paquete "mcp" que usa fastmcp.
+pythonpath = ["mcp"]
+testpaths = ["mcp"]
