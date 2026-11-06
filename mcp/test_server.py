@@ -69,3 +69,29 @@ def test_un_recurso():
 
 def test_un_prompt():
     assert len(asyncio.run(_con_cliente(lambda c: c.list_prompts()))) >= 1
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Pruebas propias (Tarea 4): la herramienta comparar_periodos. Las 8 pruebas de arriba son las originales, sin cambios.
+# Valores esperados calculados directamente desde la API del BCRP (no con el servidor):
+#   https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01770AM/json/2019-1/2019-12  → promedio 170.978
+#   https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01770AM/json/2024-1/2024-12  → promedio 183.181
+
+def test_comparar_periodos_pbi_2019_vs_2024():
+    r = llamar("comparar_periodos", codigo="PN01770AM",
+               desde_a="2019-01", hasta_a="2019-12", desde_b="2024-01", hasta_b="2024-12")
+    assert r["periodo_a"]["observaciones"] == 12 and r["periodo_b"]["observaciones"] == 12
+    assert r["periodo_a"]["promedio"] == pytest.approx(170.978, abs=0.01)
+    assert r["periodo_b"]["promedio"] == pytest.approx(183.181, abs=0.01)
+    assert r["diferencia_promedios"] == pytest.approx(r["periodo_b"]["promedio"] - r["periodo_a"]["promedio"], abs=1e-6)
+    assert r["variacion_pct"] == pytest.approx(7.14, abs=0.01)
+    assert r["periodo_a"]["fuente"].startswith("https://estadisticas.bcrp.gob.pe")
+
+
+def test_comparar_periodos_rechaza_fechas_y_codigos_invalidos():
+    with pytest.raises(ToolError, match="XX999"):
+        llamar("comparar_periodos", codigo="XX999", desde_a="2019-01", hasta_a="2019-12",
+               desde_b="2024-01", hasta_b="2024-12")
+    with pytest.raises(ToolError, match="formato"):   # una serie mensual pedida con fecha diaria
+        llamar("comparar_periodos", codigo="PN01770AM", desde_a="2019-01-15", hasta_a="2019-12",
+               desde_b="2024-01", hasta_b="2024-12")

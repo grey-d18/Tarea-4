@@ -1,13 +1,15 @@
-"""Servidor MCP del BCRP. Empiecen aquí: buscar_series ya funciona; completen los TODO hasta que pasen las pruebas.
+"""Servidor MCP del BCRP: busca, descarga, resume y compara series oficiales del Banco Central de Reserva del Perú.
 
-    uv run pytest                                           # el contrato: las 8 pruebas deben pasar
-    uv run server.py                                        # el servidor, por stdio
-    claude mcp add --scope project bcrp -- uv run server.py # conectarlo a Claude Code
+    uv run pytest -q                 # las 8 pruebas originales + 2 propias
+    uv run mcp/server.py             # el servidor, por stdio (Claude Code lo lanza desde .mcp.json)
 
 Las cuentas las hace Python, no el modelo: así cada cifra sale de una llamada que se puede repetir.
+Basado en la plantilla de la Sesión 04 (d2cml-ai/Data-Science-Python).
 """
 import re
+import time
 import unicodedata
+from datetime import date
 from functools import cache
 from pathlib import Path
 
@@ -21,11 +23,14 @@ CATALOGO = AQUI / "datos" / "catalogo_bcrp.csv"
 URL_CATALOGO = "https://estadisticas.bcrp.gob.pe/estadisticas/series/metadata"
 API = "https://estadisticas.bcrp.gob.pe/estadisticas/series/api"
 SOLO_LECTURA = {"readOnlyHint": True, "openWorldHint": True}
+MESES = {"ene": 1, "feb": 2, "mar": 3, "abr": 4, "may": 5, "jun": 6, "jul": 7, "ago": 8,
+         "sep": 9, "set": 9, "oct": 10, "nov": 11, "dic": 12}
 
 mcp = FastMCP("bcrp", instructions=(
     "Series oficiales del Banco Central de Reserva del Perú (BCRP). Primero busca el código con buscar_series; "
-    "luego usa resumen para variaciones, promedios y extremos, y serie para los datos. No calcules a mano: "
-    "cita siempre el código de la serie y el periodo."))
+    "luego usa resumen para variaciones, promedios y extremos, serie para los datos y comparar_periodos para "
+    "contrastar dos intervalos (por ejemplo 2019 frente a 2024). No calcules a mano: cita siempre el código de la "
+    "serie, el periodo y la fuente."))
 
 
 def _sin_tildes(s):
@@ -43,7 +48,9 @@ def catalogo():
     df = pd.read_csv(CATALOGO, sep=";", dtype=str).fillna("")
     df = df.rename(columns={"Código de serie": "codigo", "Categoría de serie": "categoria", "Grupo de serie": "grupo",
                             "Nombre de serie": "nombre", "Frecuencia": "frecuencia",
-                            "Fecha de actualización": "actualizada", "Fecha de inicio": "inicio"})
+                            "Fecha de actualización": "actualizada", "Fecha de inicio": "inicio",
+                            "Unidad de medida": "unidad", "Fuente": "origen",
+                            "Descripción de la serie": "descripcion"})
     df["texto"] = (df.categoria + " " + df.grupo + " " + df.nombre).map(_sin_tildes)
     return df
 
@@ -78,29 +85,162 @@ def buscar_series(texto: str, frecuencia: str | None = None, limite: int = 10) -
     return [_ficha(c) for c in orden.sort_values(["vieja", "largo"]).head(limite).codigo]
 
 
-# TODO 1 · serie(codigo, desde, hasta) -> {"codigo", "nombre", "frecuencia", "datos": [{"periodo", "valor"}], "fuente"}
-#   La API se llama así: f"{API}/{codigo}/json/{desde}/{hasta}" y responde
-#   {"config": {...}, "periods": [{"name": "Ene.2025", "values": ["0.81"]}, ...]}
-#   - Fechas que pide la API: 2025-1 (mensual y trimestral), 2025-01-15 (diaria), 2025 (anual).
-#   - Nombres que devuelve: "Ene.2025" (mensual), "01.Oct.26" (diaria), "T1.25" (trimestral), "2025" (anual).
-#     Setiembre viene como "Set". Devuelvan el periodo como "2025-01", "2026-10-01", "2025-T1" o "2025".
-#   - Salten los valores "n.d." y usen la frecuencia de _ficha(codigo) para saber qué formato pedir.
-#   - Si recibe muchos pedidos seguidos, la API responde una página HTML en vez de JSON: esperen unos segundos y
-#     reintenten (y guarden en caché lo que ya bajaron).
-#   - Un código que no existe debe dar un ToolError que diga el código.
+# ---------------------------------------------------------------- fechas: lo que pide la API y lo que devuelve
 
-# TODO 2 · resumen(codigo, desde, hasta): primero, ultimo, cambio, variacion_pct, promedio, maximo y minimo
-#   (los tres últimos con su periodo). Úsenla para que el modelo nunca haga cuentas a mano.
+def _fecha_api(fecha: str, frecuencia: str) -> str:
+    """Convierte "2025-01", "2025-T1", "2026-10-01" o "2025" al formato que pide la API según la frecuencia."""
+    f, frec = str(fecha).strip(), frecuencia.lower()
+    if frec == "diaria":
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", f):
+            return f
+    elif frec == "mensual":
+        if m := re.fullmatch(r"(\d{4})-(\d{1,2})", f):
+            return f"{m[1]}-{int(m[2])}"
+    elif frec == "trimestral":
+        if m := re.fullmatch(r"(\d{4})-T?([1-4])", f, re.I):
+            return f"{m[1]}-{m[2]}"
+    elif frec == "anual":
+        if m := re.fullmatch(r"(\d{4})(-.*)?", f):
+            return m[1]
+    ejemplos = {"diaria": "2026-10-01", "mensual": "2025-01", "trimestral": "2025-T1", "anual": "2025"}
+    raise ToolError(f"Fecha {fecha!r} no válida para una serie {frecuencia}. Usen el formato {ejemplos.get(frec, '?')}.")
 
-# TODO 3 · Una herramienta suya, bien descrita. Ideas:
-#   - comparar_paises con la API del Banco Mundial, que tampoco pide clave:
-#     https://api.worldbank.org/v2/country/PER;CHL;COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&date=2015:2025
-#   - correlacion(codigo_a, codigo_b, desde, hasta)
-#   - grafico(codigo, desde, hasta) que guarde un PNG en salidas/ y devuelva la ruta
 
-# TODO 4 · Un recurso, por ejemplo la plantilla bcrp://serie/{codigo} con la ficha de la serie.
+def _anio(aa: str) -> int:
+    """Años de dos dígitos ("26" → 2026, "97" → 1997)."""
+    a = 2000 + int(aa)
+    return a if a <= date.today().year + 1 else a - 100
 
-# TODO 5 · Un prompt, por ejemplo informe(tema) que pida citar el código y el periodo de cada cifra.
+
+def _periodo(nombre: str) -> str:
+    """Normaliza los nombres de la API: Ene.2025 → 2025-01, 01.Oct.26 → 2026-10-01, T1.25 → 2025-T1, 2025 → 2025."""
+    n = nombre.strip()
+    if m := re.fullmatch(r"(\d{2})\.(\w{3})\.(\d{2})", n):
+        return f"{_anio(m[3])}-{MESES[m[2].lower()]:02d}-{m[1]}"
+    if m := re.fullmatch(r"(\w{3})\.(\d{4})", n):
+        return f"{m[2]}-{MESES[m[1].lower()]:02d}"
+    if m := re.fullmatch(r"T([1-4])\.(\d{2})", n):
+        return f"{_anio(m[2])}-T{m[1]}"
+    if re.fullmatch(r"\d{4}", n):
+        return n
+    raise ToolError(f"Periodo con formato desconocido en la respuesta del BCRP: {nombre!r}")
+
+
+@cache
+def _descargar(url: str) -> dict:
+    """Pide la URL a la API; si responde HTML (límite de pedidos) espera y reintenta. Guarda en caché lo bajado."""
+    for intento in range(5):
+        try:
+            r = httpx.get(url, timeout=60, follow_redirects=True)
+            if r.status_code == 200:
+                return r.json()
+        except (httpx.HTTPError, ValueError):
+            pass
+        time.sleep(2 * (intento + 1))
+    raise ToolError(f"El BCRP no respondió con datos para {url}. Revisen el periodo (¿hay datos en ese rango?) "
+                    "o reintenten en unos segundos.")
+
+
+def _serie(codigo: str, desde: str, hasta: str) -> dict:
+    ficha = _ficha(codigo)
+    url = f"{API}/{codigo}/json/{_fecha_api(desde, ficha['frecuencia'])}/{_fecha_api(hasta, ficha['frecuencia'])}"
+    respuesta = _descargar(url)
+    datos = []
+    for p in respuesta.get("periods", []):
+        valor = p["values"][0]
+        if valor in ("n.d.", "", None):
+            continue
+        datos.append({"periodo": _periodo(p["name"]), "valor": round(float(valor), 6)})
+    if not datos:
+        raise ToolError(f"La serie {codigo} no tiene datos entre {desde} y {hasta}.")
+    return {"codigo": codigo, "nombre": ficha["nombre"], "frecuencia": ficha["frecuencia"], "datos": datos,
+            "fuente": url}
+
+
+@mcp.tool(annotations=SOLO_LECTURA)
+def serie(codigo: str, desde: str, hasta: str) -> dict:
+    """Descarga los datos oficiales de una serie del BCRP entre dos fechas (ambas incluidas).
+
+    Formato de fechas según la frecuencia de la serie: mensual "2025-01", trimestral "2025-T1", anual "2025",
+    diaria "2026-10-01". Devuelve {"codigo", "nombre", "frecuencia", "datos": [{"periodo", "valor"}], "fuente"};
+    "fuente" es la URL de la API del BCRP para verificar la cifra. Los valores "n.d." se omiten.
+    Ejemplo: serie("PN01770AM", "2019-01", "2024-12") → PBI mensual, índice 2007 = 100.
+    """
+    return _serie(codigo, desde, hasta)
+
+
+def _punto(s: pd.Series, idx) -> dict:
+    return {"periodo": idx, "valor": round(float(s[idx]), 6)}
+
+
+@mcp.tool(annotations=SOLO_LECTURA)
+def resumen(codigo: str, desde: str, hasta: str) -> dict:
+    """Resume una serie del BCRP entre dos fechas: primer y último dato, cambio absoluto, variación porcentual,
+    promedio, máximo y mínimo (con su periodo) y número de observaciones.
+
+    Úsenla siempre que haya que calcular algo: así el modelo nunca hace cuentas a mano. Fechas como en `serie`.
+    Ojo: si la serie ya es una tasa (por ejemplo inflación en %), "cambio" está en puntos porcentuales.
+    """
+    r = _serie(codigo, desde, hasta)
+    s = pd.Series({d["periodo"]: d["valor"] for d in r["datos"]})
+    primero, ultimo = float(s.iloc[0]), float(s.iloc[-1])
+    return {"codigo": codigo, "nombre": r["nombre"], "frecuencia": r["frecuencia"],
+            "primero": _punto(s, s.index[0]), "ultimo": _punto(s, s.index[-1]),
+            "cambio": round(ultimo - primero, 6),
+            "variacion_pct": round((ultimo / primero - 1) * 100, 4) if primero != 0 else None,
+            "promedio": round(float(s.mean()), 6),
+            "maximo": _punto(s, s.idxmax()), "minimo": _punto(s, s.idxmin()),
+            "observaciones": int(len(s)), "fuente": r["fuente"]}
+
+
+@mcp.tool(annotations=SOLO_LECTURA)
+def comparar_periodos(codigo: str, desde_a: str, hasta_a: str, desde_b: str, hasta_b: str) -> dict:
+    """Compara una misma serie del BCRP en dos intervalos de tiempo (A = base, B = comparación).
+
+    Úsenla para preguntas del tipo «¿el PBI de 2024 ya superó al de 2019?» o «¿la inflación promedio de 2022 fue
+    mayor que la de 2019?». Para cada intervalo devuelve el promedio, el mínimo, el máximo y el número de datos; y
+    luego la diferencia de promedios (B − A) y la variación porcentual de B respecto de A. Fechas como en `serie`.
+    Ejemplo: comparar_periodos("PN01770AM", "2019-01", "2019-12", "2024-01", "2024-12").
+    """
+    resumen_intervalo = {}
+    for nombre, (desde, hasta) in {"a": (desde_a, hasta_a), "b": (desde_b, hasta_b)}.items():
+        r = _serie(codigo, desde, hasta)
+        s = pd.Series({d["periodo"]: d["valor"] for d in r["datos"]})
+        resumen_intervalo[nombre] = {"desde": desde, "hasta": hasta, "promedio": round(float(s.mean()), 6),
+                                     "minimo": _punto(s, s.idxmin()), "maximo": _punto(s, s.idxmax()),
+                                     "observaciones": int(len(s)), "fuente": r["fuente"]}
+    a, b = resumen_intervalo["a"]["promedio"], resumen_intervalo["b"]["promedio"]
+    if resumen_intervalo["a"]["observaciones"] != resumen_intervalo["b"]["observaciones"]:
+        advertencia = "Los intervalos tienen distinto número de datos: comparen con cuidado (estacionalidad)."
+    else:
+        advertencia = None
+    return {"codigo": codigo, "nombre": _ficha(codigo)["nombre"], "periodo_a": resumen_intervalo["a"],
+            "periodo_b": resumen_intervalo["b"], "diferencia_promedios": round(b - a, 6),
+            "variacion_pct": round((b / a - 1) * 100, 4) if a != 0 else None, "advertencia": advertencia}
+
+
+# ---------------------------------------------------------------- recurso y prompt
+
+@mcp.resource("bcrp://serie/{codigo}", mime_type="application/json")
+def ficha_serie(codigo: str) -> dict:
+    """Ficha descriptiva de una serie del BCRP: nombre, categoría, frecuencia, unidad, fuente original,
+    desde cuándo hay datos y fecha de última actualización."""
+    ficha = _ficha(codigo)
+    f = catalogo().query("codigo == @codigo").iloc[0]
+    return {**ficha, "unidad": f.unidad, "origen": f.origen, "descripcion": f.descripcion,
+            "consulta_web": f"https://estadisticas.bcrp.gob.pe/estadisticas/series/mensuales/resultados/{codigo}/html"
+            if ficha["frecuencia"] == "Mensual" else "https://estadisticas.bcrp.gob.pe/estadisticas/series/"}
+
+
+@mcp.prompt
+def informe(tema: str, desde: str = "2019", hasta: str = "2024") -> str:
+    """Pide un informe breve y verificable sobre un indicador macroeconómico del BCRP."""
+    return (f"Elabora un informe breve sobre «{tema}» en el Perú entre {desde} y {hasta} usando solo las herramientas "
+            "del servidor bcrp. Pasos: 1) busca la serie con buscar_series y elige la más pertinente explicando por qué; "
+            "2) calcula los números con resumen o comparar_periodos (no hagas cuentas a mano); 3) presenta una tabla con "
+            "cada cifra, su código de serie, su periodo y la URL de la fuente; 4) interpreta en 3 a 5 líneas sin afirmar "
+            "relaciones causales; 5) indica limitaciones (frecuencia, revisiones de datos, cobertura geográfica). Si una "
+            "herramienta falla o no hay datos, dilo en lugar de estimar.")
 
 
 if __name__ == "__main__":

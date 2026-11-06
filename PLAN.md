@@ -14,19 +14,24 @@ https://github.com/d2cml-ai/Data-Science-Python/issues/201
 - [x] Borradores de los tres `SKILL.md` y `reference.md`
 - [x] `referencias/pobreza_departamento_2024.csv` (de la sesión 16)
 
-## Paso 2 – Datos
-- [ ] Descargar a `datos/`: `966-Modulo34.zip`, `966-Modulo02.zip`, `687-Modulo34.zip` (confirmar que 687 = 2019 con la columna de año)
-- [ ] Descargar el GeoJSON departamental a `datos/`
+## Paso 2 – Datos ✅
+- [x] Descargar a `datos/`: `966-Modulo34.zip`, `966-Modulo02.zip`, `687-Modulo34.zip` (687 = 2019, confirmado: contiene `sumaria-2019.dta`)
+- [x] Descargar el GeoJSON departamental a `datos/`
+- [x] Variables confirmadas: sumaria 2024 (33,691 hogares) y 2019 (34,565) traen `gashog2d`, `inghog2d`, `ld`, `linea`, `factor07`; módulo 02 (117,721 personas) trae `p203`–`p208a` y `facpob07`. Llaves llegan como texto con ceros.
+- [x] Chequeo rápido (aún no es la Skill): pobreza ponderada 2024 = 27.58 %, 2019 = 20.19 %
 
 ## Paso 3 – Servidor MCP del BCRP (Parte 1, 5 pts)
-- [ ] TODO 1: `serie(codigo, desde, hasta)`
-- [ ] TODO 2: `resumen(codigo, desde, hasta)`
-- [ ] TODO 3: herramienta propia → propuesta: `comparar_periodos(codigo, periodo_a, periodo_b)` (p. ej. PBI 2019 vs. 2024)
-- [ ] TODO 4: recurso `bcrp://serie/{codigo}`
-- [ ] TODO 5: prompt `informe(tema)`
-- [ ] 2 pruebas propias para la herramienta propia
-- [ ] `uv run pytest -q` → **10 passed**
-- [ ] Probar en Claude Code: `/mcp`, recurso con `@`, prompt con `/`
+- [x] TODO 1: `serie(codigo, desde, hasta)` (fechas mensual/trimestral/anual/diaria, omite "n.d.", reintenta si la API limita)
+- [x] TODO 2: `resumen(codigo, desde, hasta)`
+- [x] TODO 3: herramienta propia `comparar_periodos(codigo, desde_a, hasta_a, desde_b, hasta_b)`
+- [x] TODO 4: recurso `bcrp://serie/{codigo}` (ficha con unidad, origen y descripción)
+- [x] TODO 5: prompt `informe(tema, desde, hasta)`
+- [x] 2 pruebas propias para `comparar_periodos` (agregadas al final de `test_server.py`; las 8 originales sin cambios)
+- [x] `uv run pytest -q` → **10 passed**
+- [x] El servidor arranca por stdio desde `.mcp.json` (4 herramientas, 1 recurso, 1 prompt)
+- [ ] **Tú:** probar en Claude Code: `/mcp`, recurso con `@bcrp:bcrp://serie/PN01770AM`, prompt con `/mcp__bcrp__informe PBI`; guardar la sesión en `evidencias_ia/mcp/`
+
+Dato ya obtenido con la herramienta: PBI promedio 2024 vs. 2019 = **+7.14 %** (índice 183.18 vs. 170.98, `PN01770AM`); mínimo en 2020-04 (102.9).
 
 Series candidatas (verificadas en la API del BCRP):
 | Código | Serie |
