@@ -51,9 +51,13 @@ Series candidatas (verificadas en la API del BCRP):
   - **Gini** del gasto per cápita (`gashog2d / mieperho / 12`, ponderado con `factor07 × mieperho`)
   - Validaciones → `salidas/validacion.txt`: 27.6 % (±0.1), 108,664 residentes, 25 departamentos; detenerse si falla
   - Para 2019: solo sumaria (pobreza y Gini nacional y por departamento)
-- [ ] `graficando-enaho`: área urbana/rural, sexo, departamentos (+ pobreza y Gini 2019 vs. 2024)
-- [ ] `mapeando-enaho`: mapa 2024 (y, si da el tiempo, mapa de cambio 2019→2024)
-- [ ] Demostrar: invocación individual, activación por lenguaje natural, y que gráficos/mapa llaman antes a limpieza
+- [x] `graficando-enaho/scripts/graficar.py`: area, sexo, edad, departamento, comparacion, gini, cambio → `figuras/*.png` + CSV con los valores
+- [x] `mapeando-enaho/scripts/mapear.py`: pobreza 2024 y cambio 2019→2024 → `mapas/`; 25/25 unidades, coincide con la referencia (máx. 0.1 pp); `salidas/validacion_mapa.txt`
+- [x] Si falta la base limpia, ambos scripts piden ejecutar `limpiando-enaho` (probado)
+- [ ] **Tú:** demostrar en Claude Code (sesión nueva) y guardar en `evidencias_ia/skills/`:
+  - `/limpiando-enaho 2024` (invocación individual)
+  - «Grafica la pobreza urbana y rural con la ENAHO 2024» (activación por lenguaje natural)
+  - Borrar `salidas/indicadores.csv` y pedir «Haz un mapa de la pobreza monetaria por departamento con ENAHO 2024» (debe correr limpieza y luego mapa)
 
 ## Paso 5 – Preguntas de evaluación (Parte 4, antes de probar el agente)
 - [ ] `evaluacion/preguntas.csv`: 4 BCRP + 4 ENAHO + 2 combinadas, con respuesta esperada y **tolerancia fijada antes**
