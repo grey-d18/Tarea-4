@@ -41,7 +41,9 @@ Series candidatas (verificadas en la API del BCRP):
 | `PN01773AM` | PBI desestacionalizado, índice (mensual) |
 
 ## Paso 4 – Skills de ENAHO (Parte 2, 6 pts)
-- [ ] `limpiando-enaho/scripts/limpiar.py --anio 2024|2019`
+- [x] `limpiando-enaho/scripts/limpiar.py --anio 2024|2019` → 2024: 15/15 validaciones; 2019: 6/6; se detiene si falla una esencial (probado)
+  - Resultados clave: pobreza 20.19 % → 27.58 %; Gini 0.375 → 0.349; urbana 14.6 % → 24.8 %; rural 40.8 % → 39.3 %; Lima Metropolitana 14.2 % → 28.2 %
+  - Pobreza departamental 2024 coincide con la referencia de la sesión 16 (máx. diferencia 0.1 pp, redondeo)
   - Leer Stata con llaves como texto; nombres en minúscula
   - Residentes habituales: `((p204==1)&(p205==2)) | ((p204==2)&(p206==1))`
   - `merge(..., validate="m:1")` y verificar que no duplique

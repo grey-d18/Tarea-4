@@ -1,0 +1,20 @@
+Validación ENAHO 2024 (código INEI 966)
+Generado: 2026-11-06 15:19 con .claude/skills/limpiando-enaho/scripts/limpiar.py
+Resultado: 15/15 verificaciones aprobadas; SIN fallas esenciales
+
+[APROBADA   ] Llaves de hogar únicas en la sumaria: 33,691 hogares, 0 duplicados
+[APROBADA   ] Factores de expansión válidos: factor07 nulos=0, no positivos=0
+[APROBADA   ] 25 códigos territoriales (01–25): 25 códigos encontrados
+[APROBADA   ] Lima (15) y Callao (07) separados: ambos presentes
+[APROBADA   ] Pobreza monetaria nacional ≈ 27.6 % (±0.1 pp): 27.58 % con sumaria y factor07 × mieperho (diferencia -0.02 pp)
+[APROBADA   ] Llaves de persona únicas en el módulo 02: 117,721 filas
+[APROBADA   ] Residentes habituales = 108,664: 108,664 personas
+[APROBADA   ] Unión personas–hogares m:1 sin duplicar filas: 108,664 antes, 108,664 después
+[APROBADA   ] Todas las personas encuentran su hogar: 0 sin hogar
+[APROBADA   ] facpob07 válido: nulos=0
+[APROBADA   ] Pobreza con personas y facpob07 ≈ 27.6 % (±0.1 pp): 27.53 %
+[INFO       ] Control: promedio simple SIN ponderar = 25.61 % (no usar; muestra por qué se pondera)
+[APROBADA   ] Pobreza urbana ≈ 24.8 %: 24.81 %
+[APROBADA   ] Pobreza rural ≈ 39.3 %: 39.30 %
+[APROBADA   ] Pobreza Lima Metropolitana ≈ 28.2 %: 28.21 %
+[APROBADA   ] Gini del gasto real per cápita plausible (0.2–0.6): 0.3494

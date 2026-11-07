@@ -1,0 +1,10 @@
+Validación ENAHO 2019 (código INEI 687)
+Generado: 2026-11-06 15:19 con .claude/skills/limpiando-enaho/scripts/limpiar.py
+Resultado: 6/6 verificaciones aprobadas; SIN fallas esenciales
+
+[APROBADA   ] Llaves de hogar únicas en la sumaria: 34,565 hogares, 0 duplicados
+[APROBADA   ] Factores de expansión válidos: factor07 nulos=0, no positivos=0
+[APROBADA   ] 25 códigos territoriales (01–25): 25 códigos encontrados
+[APROBADA   ] Lima (15) y Callao (07) separados: ambos presentes
+[APROBADA   ] Pobreza monetaria nacional ≈ 20.2 % (±0.1 pp): 20.19 % con sumaria y factor07 × mieperho (diferencia -0.01 pp)
+[APROBADA   ] Gini del gasto real per cápita plausible (0.2–0.6): 0.3751
