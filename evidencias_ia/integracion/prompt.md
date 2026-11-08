@@ -50,7 +50,7 @@ Trabaja así, sin hacer cuentas a mano:
 
 ---
 
-## Verificación manual (la hace la estudiante, no el agente)
+## Verificación manual (se hace a mano, no la hace el agente)
 
 Elegir 3 cifras del informe, de ambas fuentes, y comprobarlas fuera de Claude:
 

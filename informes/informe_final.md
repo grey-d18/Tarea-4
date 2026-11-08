@@ -181,8 +181,11 @@ que una descarga posterior podría diferir levemente.
 
 ## 8. Verificación manual
 
-| cifra | valor del informe | cómo la verifiqué | ¿coincide? |
-|---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+Comprobación hecha a mano, fuera de Claude Code, de 3 afirmaciones numéricas del informe (de ambas
+fuentes).
+
+| Afirmación del informe | Valor calculado | Fuente o procedimiento de verificación | ¿Coincide? | Diferencia observada |
+|---|---|---|---|---|
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
