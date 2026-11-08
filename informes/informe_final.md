@@ -2,8 +2,30 @@
 
 ## 1. Pregunta de investigación
 
-¿La recuperación del PBI peruano entre 2019 y 2024 se reflejó en una menor pobreza monetaria y desigualdad en los
-departamentos del país?
+**Tema.** La relación entre el crecimiento económico agregado y el bienestar de los hogares en el Perú
+después de la pandemia.
+
+**Pregunta.** ¿La recuperación del PBI peruano entre 2019 y 2024 se reflejó en una menor pobreza monetaria y
+desigualdad en los departamentos del país?
+
+**Objetivo.** Contrastar la evolución de la actividad económica nacional (BCRP) con la pobreza monetaria y la
+desigualdad del gasto de los hogares (INEI, ENAHO) entre 2019 y 2024. Se busca identificar en qué ámbitos y
+departamentos la pobreza subió o bajó.
+
+**Delimitación.**
+
+| Aspecto | Alcance |
+|---|---|
+| Territorio | Perú: nivel nacional, área urbana y rural, Lima Metropolitana y los 25 departamentos (Lima y Callao por separado) |
+| Periodo | 2019, el último año antes de la pandemia, frente a 2024, el último año con ENAHO disponible. No se analizan los años intermedios. |
+| Actividad económica | PBI real mensual, índice 2007 = 100 (BCRP, PN01770AM), comparado como promedio anual. Es una serie nacional; no hay PBI departamental. |
+| Pobreza | Pobreza monetaria (gasto per cápita frente a la línea del INEI), no multidimensional |
+| Desigualdad | Gini del gasto real per cápita, no del ingreso |
+| Alcance de las conclusiones | Descriptivo: se comparan dos momentos y no se estiman efectos causales |
+
+*Nota: el tema, el objetivo y la delimitación de esta sección se agregaron después de la ejecución del agente,
+para cumplir con el contenido pedido en la consigna. El resto del informe lo generó el agente
+(ver `evidencias_ia/integracion/`).*
 
 ## 2. Metodología
 
