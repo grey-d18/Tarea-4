@@ -30,7 +30,7 @@ https://github.com/d2cml-ai/Data-Science-Python/issues/201
 - [x] `uv run pytest -q` → **10 passed**
 - [x] El servidor arranca por stdio desde `.mcp.json` (5 herramientas, 1 recurso, 1 prompt)
 - [x] Herramienta extra `graficar_serie(codigo, desde, hasta, promedios_de, archivo)` → `figuras/<archivo>.png` + `.csv` (el gráfico BCRP del informe)
-- [ ] **Tú:** probar en Claude Code: `/mcp`, recurso con `@bcrp:bcrp://serie/PN01770AM`, prompt con `/mcp__bcrp__informe PBI`; guardar la sesión en `evidencias_ia/mcp/`
+- [x] Demo en Claude Code (`evidencias_ia/mcp/`): `/mcp`, recurso con `@bcrp:bcrp://serie/PN01770AM`, prompt con `/mcp__bcrp__informe PBI`; guardar la sesión en `evidencias_ia/mcp/`
 
 Dato ya obtenido con la herramienta: PBI promedio 2024 vs. 2019 = **+7.14 %** (índice 183.18 vs. 170.98, `PN01770AM`); mínimo en 2020-04 (102.9).
 
@@ -55,7 +55,7 @@ Series candidatas (verificadas en la API del BCRP):
 - [x] `graficando-enaho/scripts/graficar.py`: area, sexo, edad, departamento, comparacion, gini, cambio → `figuras/*.png` + CSV con los valores
 - [x] `mapeando-enaho/scripts/mapear.py`: pobreza 2024 y cambio 2019→2024 → `mapas/`; 25/25 unidades, coincide con la referencia (máx. 0.1 pp); `salidas/validacion_mapa.txt`
 - [x] Si falta la base limpia, ambos scripts piden ejecutar `limpiando-enaho` (probado)
-- [ ] **Tú:** demostrar en Claude Code (sesión nueva) y guardar en `evidencias_ia/skills/`:
+- [x] Demo en Claude Code guardada en `evidencias_ia/skills/`:
   - `/limpiando-enaho 2024` (invocación individual)
   - «Grafica la pobreza urbana y rural con la ENAHO 2024» (activación por lenguaje natural)
   - Borrar `salidas/indicadores.csv` y pedir «Haz un mapa de la pobreza monetaria por departamento con ENAHO 2024» (debe correr limpieza y luego mapa)
@@ -77,10 +77,10 @@ Series candidatas (verificadas en la API del BCRP):
 - [x] `evaluacion/resultados.csv`, `evaluacion/comparacion.md` y `evaluacion/registros/`
 
 ## Paso 8 – Cierre
-- [ ] README completo (12 secciones)
-- [ ] Exportar conversaciones a `evidencias_ia/` (¡incluida esta de planificación!) y ocultar datos sensibles
-- [ ] Commits y push; revisar que todos los enlaces sean públicos
-- [ ] Publicar el comentario de entrega en el issue
+- [x] README completo (12 secciones)
+- [x] Conversaciones exportadas a `evidencias_ia/` (planificación, demo MCP, demo Skills, integración) con rutas personales ocultas
+- [x] Push; repositorio público y enlaces verificados (HTTP 200)
+- [ ] **Tú:** publicar el comentario de entrega en el issue
 
 ---
 
