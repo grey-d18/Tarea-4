@@ -4745,7 +4745,7 @@
   registros de la evaluación (no tienen correos ni claves) y hago el commit.
 
 ⏺ Bash(sed -i '' 's#~#~#g' evaluacion/registros/*/*.jsonl && grep
-      -c "greicyrc" evaluacion/registros/*/*.jsonl | awk -F: '{s+=$2} END{print
+      -c "usuario" evaluacion/registros/*/*.jsonl | awk -F: '{s+=$2} END{print
       s}' && uv run…)
   ⎿  20
      68:## Paso 6 – Ejecución del agente (Parte 3, 5 pts) ✅
@@ -4820,7 +4820,7 @@
         -result_not_for_model_v1","mcp_call_check_permissions_v1"],"analy
         -tics_disabled":false,"product_feedback_disabled":false,"uuid":"3
         -ac91c29-aa93-41f4-b0e6-2a3cd256cbfc","memory_paths":{"auto":"/Us
-        -ers/greicyrc/.claude/projects/-Users-usuario-Documents-GitHub-T
+        -ers/usuario/.claude/projects/-Users-usuario-Documents-GitHub-T
         -area-4/memory/"},"original_cwd":"~/Documents/GitHu
         -b/Tarea-4","additional_directories":[],"messaging_socket_path":"
         -/tmp/cc-socks/58170.sock","fast_mode_state":"off","fast_mode_dis
@@ -4916,7 +4916,7 @@
         -result_not_for_model_v1","mcp_call_check_permissions_v1"],"analy
         -tics_disabled":false,"product_feedback_disabled":false,"uuid":"1
         -6e639cd-e672-476f-9115-3bff9066a73f","memory_paths":{"auto":"/Us
-        -ers/greicyrc/.claude/projects/-Users-usuario-Documents-GitHub-T
+        -ers/usuario/.claude/projects/-Users-usuario-Documents-GitHub-T
         -area-4/memory/"},"original_cwd":"~/Documents/GitHu
         -b/Tarea-4","additional_directories":[],"messaging_socket_path":"
         -/tmp/cc-socks/58172.sock","fast_mode_state":"off","fast_mode_dis
@@ -5012,7 +5012,7 @@
         -result_not_for_model_v1","mcp_call_check_permissions_v1"],"analy
         -tics_disabled":false,"product_feedback_disabled":false,"uuid":"7
         -1469440-96fe-4ec8-8422-8793b425f8da","memory_paths":{"auto":"/Us
-        -ers/greicyrc/.claude/projects/-Users-usuario-Documents-GitHub-T
+        -ers/usuario/.claude/projects/-Users-usuario-Documents-GitHub-T
         -area-4/memory/"},"original_cwd":"~/Documents/GitHu
         -b/Tarea-4","additional_directories":[],"messaging_socket_path":"
         -/tmp/cc-socks/58173.sock","fast_mode_state":"off","fast_mode_dis
@@ -5171,7 +5171,7 @@
         -result_not_for_model_v1","mcp_call_check_permissions_v1"],"analy
         -tics_disabled":false,"product_feedback_disabled":false,"uuid":"8
         -2a83b6d-da2f-4de2-9a76-c4cf454fe2ce","memory_paths":{"auto":"/Us
-        -ers/greicyrc/.claude/projects/-Users-usuario-Documents-GitHub-T
+        -ers/usuario/.claude/projects/-Users-usuario-Documents-GitHub-T
         -area-4/memory/"},"original_cwd":"~/Documents/GitHu
         -b/Tarea-4","additional_directories":[],"messaging_socket_path":"
         -/tmp/cc-socks/58171.sock","fast_mode_state":"off","fast_mode_dis
@@ -5222,7 +5222,7 @@
   Searched for 1 pattern (ctrl+o to expand)
 
 ⏺ Bash(sed -i '' 's#-Users-usuario-#-Users-usuario-#g'
-      evaluacion/registros/*/*.jsonl && grep -c greicyrc
+      evaluacion/registros/*/*.jsonl && grep -c usuario
       evaluacion/registros/*/*.jsonl | awk -F: '{s+=$2} END{print…)
   ⎿  0
      34034af Evaluación Modo A vs. Modo B: resultados, registros y comparac
@@ -6409,7 +6409,7 @@
   Read 2 files, ran 1 shell command (ctrl+o to expand)
 
 ⏺ Bash(sed -i '' 's#~#~#g' evidencias_ia/skills/demo_skills.md &&
-      grep -c greicyrc evidencias_ia/skills/demo_skills.md; git diff --stat
+      grep -c usuario evidencias_ia/skills/demo_skills.md; git diff --stat
       salidas; git rm -…)
   ⎿  0
       salidas/validacion.txt      | 2 +-
