@@ -50,6 +50,8 @@ Cada respuesta se califica como:
 | Modelo | El mismo en ambos modos | El mismo en ambos modos |
 | Instrucción | La misma en ambos modos | La misma en ambos modos |
 
+- Se ejecuta con `uv run evaluacion/evaluar.py --modelo sonnet` (ambos modos). Cada sesión completa queda en
+  `registros/<modo>/<id>.jsonl`.
 - Cada pregunta se ejecuta en una **sesión independiente** (`claude -p`, sin persistir la sesión).
 - En el modo A, Claude no tiene acceso a archivos, así que no puede leer `preguntas.csv`, `salidas/` ni
   `verificacion_respuestas.csv`.

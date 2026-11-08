@@ -29,8 +29,8 @@ MESES = {"ene": 1, "feb": 2, "mar": 3, "abr": 4, "may": 5, "jun": 6, "jul": 7, "
 mcp = FastMCP("bcrp", instructions=(
     "Series oficiales del Banco Central de Reserva del Perú (BCRP). Primero busca el código con buscar_series; "
     "luego usa resumen para variaciones, promedios y extremos, serie para los datos y comparar_periodos para "
-    "contrastar dos intervalos (por ejemplo 2019 frente a 2024). No calcules a mano: cita siempre el código de la "
-    "serie, el periodo y la fuente."))
+    "contrastar dos intervalos (por ejemplo 2019 frente a 2024); graficar_serie guarda un gráfico en figuras/. "
+    "No calcules a mano: cita siempre el código de la serie, el periodo y la fuente."))
 
 
 def _sin_tildes(s):
@@ -217,6 +217,84 @@ def comparar_periodos(codigo: str, desde_a: str, hasta_a: str, desde_b: str, has
     return {"codigo": codigo, "nombre": _ficha(codigo)["nombre"], "periodo_a": resumen_intervalo["a"],
             "periodo_b": resumen_intervalo["b"], "diferencia_promedios": round(b - a, 6),
             "variacion_pct": round((b / a - 1) * 100, 4) if a != 0 else None, "advertencia": advertencia}
+
+
+@mcp.tool(annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True,
+                       "openWorldHint": True})
+def graficar_serie(codigo: str, desde: str, hasta: str, promedios_de: list[str] | None = None,
+                   archivo: str | None = None) -> dict:
+    """Grafica una serie del BCRP como línea y guarda figuras/<archivo>.png (200 dpi) y figuras/<archivo>.csv.
+
+    `promedios_de` es una lista opcional de años (por ejemplo ["2019", "2024"]) cuyo promedio anual se dibuja como
+    un tramo horizontal sobre la línea, para comparar niveles. Sin `archivo`, el nombre es bcrp_<codigo>.
+    Devuelve las rutas, el título usado, los promedios dibujados y la fuente. Fechas como en `serie`.
+    Ejemplo: graficar_serie("PN01770AM", "2019-01", "2024-12", ["2019", "2024"]).
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    r = _serie(codigo, desde, hasta)
+    tabla = pd.DataFrame(r["datos"])
+    if r["frecuencia"] in ("Mensual", "Diaria"):
+        x = pd.to_datetime(tabla.periodo)
+    elif r["frecuencia"] == "Trimestral":
+        x = pd.PeriodIndex(tabla.periodo.str.replace("-T", "Q"), freq="Q").to_timestamp(how="end")
+    else:
+        x = pd.to_datetime(tabla.periodo.astype(str) + "-07-01")
+    superficie, texto, texto_2, grilla = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
+    colores = ["#eb6834", "#2a78d6", "#1f9e7a", "#8a5cd6"]
+
+    fig, ax = plt.subplots(figsize=(9, 5), facecolor=superficie)
+    ax.set_facecolor(superficie)
+    ax.plot(x, tabla.valor, color=texto_2, lw=1.6, zorder=2)
+    promedios = {}
+    for i, anio in enumerate(promedios_de or []):
+        anio = str(anio)
+        sel = tabla.periodo.astype(str).str.startswith(anio)
+        if not sel.any():
+            raise ToolError(f"No hay datos de {anio} entre {desde} y {hasta} para dibujar su promedio.")
+        prom = float(tabla.valor[sel].mean())
+        promedios[anio] = round(prom, 4)
+        c = colores[i % len(colores)]
+        ax.hlines(prom, x[sel].min(), x[sel].max(), color=c, lw=3, zorder=3)
+        ax.annotate(f"Promedio {anio}: {prom:,.1f}", (x[sel].min(), prom), xytext=(0, 8),
+                    textcoords="offset points", color=texto, fontsize=9, weight="bold",
+                    bbox=dict(boxstyle="round,pad=0.2", fc=superficie, ec=c, lw=1))
+    i_min = tabla.valor.idxmin()
+    ax.annotate(f"Mínimo: {tabla.valor[i_min]:,.1f} ({tabla.periodo[i_min]})", (x[i_min], tabla.valor[i_min]),
+                xytext=(12, 0), textcoords="offset points", va="center", fontsize=8.5, color=texto_2)
+    for lado in ("top", "right"):
+        ax.spines[lado].set_visible(False)
+    for lado in ("left", "bottom"):
+        ax.spines[lado].set_color(grilla)
+    ax.grid(axis="y", color=grilla, lw=0.8)
+    ax.tick_params(colors=texto_2, labelsize=9)
+
+    if len(promedios) >= 2:
+        anios = list(promedios)
+        var = (promedios[anios[-1]] / promedios[anios[0]] - 1) * 100
+        titulo = (f"El promedio de {anios[-1]} fue {abs(var):.1f} % {'mayor' if var >= 0 else 'menor'} "
+                  f"que el de {anios[0]}")
+    else:
+        titulo = r["nombre"]
+    import textwrap
+    fig.text(0.03, 0.965, textwrap.fill(titulo, 70), ha="left", va="top", fontsize=13, weight="bold", color=texto)
+    fig.text(0.03, 0.895, textwrap.fill(f"{r['nombre']} ({codigo}), {tabla.periodo.iloc[0]} a "
+                                        f"{tabla.periodo.iloc[-1]}", 110),
+             ha="left", va="top", fontsize=9.5, color=texto_2)
+    fig.text(0.03, 0.015, "Fuente: BCRP, estadísticas en línea (API). Elaboración propia.", fontsize=7.5,
+             color=texto_2)
+    fig.subplots_adjust(top=0.82, bottom=0.1, left=0.08, right=0.97)
+
+    nombre = re.sub(r"[^A-Za-z0-9_-]", "_", archivo or f"bcrp_{codigo}")
+    carpeta = AQUI.parent / "figuras"
+    carpeta.mkdir(exist_ok=True)
+    fig.savefig(carpeta / f"{nombre}.png", dpi=200, facecolor=superficie)
+    plt.close(fig)
+    tabla.to_csv(carpeta / f"{nombre}.csv", index=False)
+    return {"imagen": f"figuras/{nombre}.png", "datos": f"figuras/{nombre}.csv", "titulo": titulo,
+            "promedios": promedios, "observaciones": int(len(tabla)), "fuente": r["fuente"]}
 
 
 # ---------------------------------------------------------------- recurso y prompt

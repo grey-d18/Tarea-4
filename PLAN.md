@@ -28,7 +28,8 @@ https://github.com/d2cml-ai/Data-Science-Python/issues/201
 - [x] TODO 5: prompt `informe(tema, desde, hasta)`
 - [x] 2 pruebas propias para `comparar_periodos` (agregadas al final de `test_server.py`; las 8 originales sin cambios)
 - [x] `uv run pytest -q` → **10 passed**
-- [x] El servidor arranca por stdio desde `.mcp.json` (4 herramientas, 1 recurso, 1 prompt)
+- [x] El servidor arranca por stdio desde `.mcp.json` (5 herramientas, 1 recurso, 1 prompt)
+- [x] Herramienta extra `graficar_serie(codigo, desde, hasta, promedios_de, archivo)` → `figuras/<archivo>.png` + `.csv` (el gráfico BCRP del informe)
 - [ ] **Tú:** probar en Claude Code: `/mcp`, recurso con `@bcrp:bcrp://serie/PN01770AM`, prompt con `/mcp__bcrp__informe PBI`; guardar la sesión en `evidencias_ia/mcp/`
 
 Dato ya obtenido con la herramienta: PBI promedio 2024 vs. 2019 = **+7.14 %** (índice 183.18 vs. 170.98, `PN01770AM`); mínimo en 2020-04 (102.9).
@@ -65,11 +66,14 @@ Series candidatas (verificadas en la API del BCRP):
 - [x] `evaluacion/protocolo.md`: tolerancias, criterios de calificación y condiciones de los modos A y B
 
 ## Paso 6 – Ejecución del agente (Parte 3, 5 pts)
-- [ ] Una sola sesión de Claude Code: ≥2 herramientas MCP + ≥2 Skills → guardar la conversación en `evidencias_ia/integracion/`
+- [x] Prompt listo en `evidencias_ia/integracion/prompt.md` (usa comparar_periodos, resumen, graficar_serie y las 3 Skills)
+- [ ] **Tú:** una sola sesión de Claude Code: ≥2 herramientas MCP + ≥2 Skills → guardar la conversación en `evidencias_ia/integracion/`
 - [ ] `informes/informe_final.md`: pregunta, metodología, ≥3 hallazgos, gráfico BCRP + gráfico ENAHO + mapa, interpretación, limitaciones, reproducibilidad
 - [ ] **Tú** verificas a mano ≥3 cifras (de ambas fuentes) y lo documentas
 
 ## Paso 7 – Evaluación Modo A vs. Modo B (Parte 4, 4 pts)
+- [x] `evaluacion/evaluar.py`: `claude -p` por pregunta, mismo modelo e instrucción; A sin herramientas, B con MCP + Skills; guarda cada sesión en `evaluacion/registros/` (probado con 2 preguntas en Haiku)
+- [ ] **Tú:** `uv run evaluacion/evaluar.py --modelo sonnet` y calificar a mano la interpretación de las 2 combinadas
 - [ ] Modo A (sin MCP ni Skills) y Modo B (con ambos), cada pregunta en sesión nueva, mismo modelo
 - [ ] `evaluacion/resultados.csv` y `evaluacion/comparacion.md`
 
