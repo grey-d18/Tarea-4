@@ -206,7 +206,7 @@ Los zip no se descomprimen: los scripts los leen directamente. La carpeta `datos
 
 ## 6. Instalación con `uv`
 
-Requiere Python 3.12 o superior y [uv](https://docs.astral.sh/uv/).
+Requiere Python 3.11 o superior y [uv](https://docs.astral.sh/uv/).
 
 ```bash
 git clone https://github.com/grey-d18/Tarea-4.git
