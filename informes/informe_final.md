@@ -208,6 +208,7 @@ fuentes).
 
 | Afirmación del informe | Valor calculado | Fuente o procedimiento de verificación | ¿Coincide? | Diferencia observada |
 |---|---|---|---|---|
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| Pobreza monetaria nacional 2024: 27.58 % (hallazgo 2) | 27.58 % (`salidas/indicadores.csv`) | Cifra de referencia de la consigna de la Tarea 4 (INEI): aproximadamente 27.6 % | Sí | 0.02 pp, por redondeo; está dentro de la tolerancia de 0.1 pp que acepta la consigna |
+| Pobreza urbana 2024: 24.81 % (hallazgo 2) | 24.81 % (`salidas/indicadores.csv`) | Cifra de referencia de la consigna de la Tarea 4 (INEI): aproximadamente 24.8 % | Sí | 0.01 pp, por redondeo |
+| Pobreza rural 2024: 39.30 % (hallazgo 2) | 39.30 % (`salidas/indicadores.csv`) | Cifra de referencia de la consigna de la Tarea 4 (INEI): aproximadamente 39.3 % | Sí | Ninguna |
+| PBI promedio 2024 7.14 % mayor que el de 2019 (hallazgo 1; promedios 170.98 y 183.18) | Promedios 170.99 (2019) y 183.18 (2024); variación 7.13 % | Los 24 valores mensuales de la serie PN01770AM (API del BCRP, https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01770AM/json/2019-1/2024-12) se copiaron a una hoja de cálculo con un decimal y se promediaron a mano (captura: `evidencias_ia/integracion/verificacion_manual_pbi.png`) | Sí | 0.01 en el promedio de 2019 y 0.01 pp en la variación, porque los valores se copiaron redondeados a un decimal |
