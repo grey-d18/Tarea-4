@@ -31,6 +31,15 @@ efecto de precios) y empieza en 1994, así que cubre todo 2019–2024.
   del INEI (variable `pobreza` ≤ 2 en la sumaria; pobreza extrema = 1).
 - *Gini*: coeficiente de Gini del **gasto real per cápita** (`gashog2d / (12 × mieperho × ld)`, precios de Lima
   Metropolitana con el deflactor espacial `ld`), ponderado por personas. Va de 0 (igualdad total) a 1.
+  Se usa el **gasto** y no el ingreso (`inghog2d`) por cuatro razones:
+  1. Es la misma variable con la que el INEI define la pobreza monetaria, así que pobreza y desigualdad se miden
+     igual.
+  2. Es más estable que el ingreso, que en los hogares informales varía mucho de un mes a otro.
+  3. En las encuestas se declara con menos error que el ingreso, que suele subdeclararse.
+  4. Es la medida habitual del INEI y del Banco Mundial para el Perú.
+
+  Por eso este Gini **no es comparable** con cifras de Gini del ingreso, que suelen ser más altas porque los
+  hogares de mayores ingresos ahorran parte de lo que ganan.
 - *Departamento*: `ubigeo[:2]`, 25 unidades con Lima (15) y Callao (07) separados.
 
 **Herramientas MCP (servidor `bcrp`, `mcp/server.py`)**: `buscar_series`, `comparar_periodos`, `resumen`,

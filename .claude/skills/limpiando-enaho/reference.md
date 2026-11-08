@@ -47,3 +47,14 @@ Confirmado con las etiquetas de los archivos `.dta` de 2019 y 2024 (mismas codif
 Gini ponderado del `gasto_pc_real`, con pesos `peso_personas`, calculado como 1 − Σ (pᵢ − pᵢ₋₁)(Lᵢ + Lᵢ₋₁) sobre la
 curva de Lorenz. El INEI también mide la desigualdad con el gasto real per cápita de la ENAHO. Como el deflactor
 temporal es común dentro de un año, no altera el Gini de ese año.
+
+**¿Por qué gasto y no ingreso?** Hay cuatro razones:
+
+1. La pobreza monetaria del INEI se define con el gasto per cápita, así que pobreza y desigualdad usan la misma
+   variable.
+2. El gasto es más estable que el ingreso, que en los hogares informales varía mucho.
+3. El gasto se declara con menos error; el ingreso suele subdeclararse.
+4. Es la medida habitual del INEI y del Banco Mundial para el Perú.
+
+**Al reportarlo**, escribir siempre «Gini **del gasto**». Además, aclarar que no es comparable con un Gini del
+ingreso (`inghog2d`), que suele ser más alto porque los hogares de mayores ingresos ahorran parte de lo que ganan.
