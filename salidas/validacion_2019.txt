@@ -1,5 +1,5 @@
 Validación ENAHO 2019 (código INEI 687)
-Generado: 2026-11-07 20:31 con .claude/skills/limpiando-enaho/scripts/limpiar.py
+Generado: 2026-11-07 22:19 con .claude/skills/limpiando-enaho/scripts/limpiar.py
 Resultado: 6/6 verificaciones aprobadas; SIN fallas esenciales
 
 [APROBADA   ] Llaves de hogar únicas en la sumaria: 34,565 hogares, 0 duplicados

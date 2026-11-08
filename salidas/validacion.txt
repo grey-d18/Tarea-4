@@ -1,5 +1,5 @@
 Validación ENAHO 2024 (código INEI 966)
-Generado: 2026-11-07 20:31 con .claude/skills/limpiando-enaho/scripts/limpiar.py
+Generado: 2026-11-07 22:18 con .claude/skills/limpiando-enaho/scripts/limpiar.py
 Resultado: 15/15 verificaciones aprobadas; SIN fallas esenciales
 
 [APROBADA   ] Llaves de hogar únicas en la sumaria: 33,691 hogares, 0 duplicados
