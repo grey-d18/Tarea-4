@@ -1,5 +1,8 @@
 Validación del mapa departamental
 
+## pobreza
 [APROBADA ] Unión ubigeo[:2] = FIRST_IDDP: 25 geometrías, 25 con dato; Lima (15) y Callao (07) separados
 [APROBADA ] Comparación con referencias/pobreza_departamento_2024.csv (Sesión 16): 25/25 departamentos, máxima diferencia 0.1 pp (tolerancia 0.1 pp, redondeo)
+
+## cambio
 [APROBADA ] Unión ubigeo[:2] = FIRST_IDDP: 25 geometrías, 25 con dato; Lima (15) y Callao (07) separados

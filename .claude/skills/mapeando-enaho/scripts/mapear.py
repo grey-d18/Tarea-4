@@ -49,7 +49,7 @@ def geometria() -> gpd.GeoDataFrame:
     return g
 
 
-def unir(valores: pd.DataFrame, columna: str, validacion: list[str]) -> gpd.GeoDataFrame:
+def unir(valores: pd.DataFrame, columna: str, validacion: list[str], mapa: str) -> gpd.GeoDataFrame:
     """Une por código (nunca por nombre) y exige 25 departamentos con dato."""
     g = geometria().merge(valores, left_on="FIRST_IDDP", right_on="codigo", how="left", validate="1:1")
     sin_dato = g[g[columna].isna()].NOMBDEP.tolist()
@@ -58,15 +58,27 @@ def unir(valores: pd.DataFrame, columna: str, validacion: list[str]) -> gpd.GeoD
                       f"{len(g) - len(sin_dato)} con dato" + (f"; sin dato: {sin_dato}" if sin_dato else "")
                       + "; Lima (15) y Callao (07) separados")
     if not ok:
-        escribir_validacion(validacion)
+        escribir_validacion(validacion, mapa)
         sys.exit(f"DETENIDO: la unión territorial no tiene 25 departamentos con dato ({sin_dato}).")
     return g
 
 
-def escribir_validacion(lineas):
+def escribir_validacion(lineas, mapa):
+    """Reescribe solo la sección de este mapa en salidas/validacion_mapa.txt y conserva la del otro mapa."""
     SALIDAS.mkdir(exist_ok=True)
-    (SALIDAS / "validacion_mapa.txt").write_text("Validación del mapa departamental\n\n" + "\n".join(lineas) + "\n",
-                                                 encoding="utf-8")
+    archivo = SALIDAS / "validacion_mapa.txt"
+    secciones = {}
+    if archivo.exists():
+        actual = None
+        for linea in archivo.read_text(encoding="utf-8").splitlines():
+            if linea.startswith("## "):
+                actual = linea[3:].strip()
+                secciones[actual] = []
+            elif actual and linea.strip():
+                secciones[actual].append(linea)
+    secciones[mapa] = lineas
+    cuerpo = "\n\n".join(f"## {m}\n" + "\n".join(secciones[m]) for m in ("pobreza", "cambio") if m in secciones)
+    archivo.write_text("Validación del mapa departamental\n\n" + cuerpo + "\n", encoding="utf-8")
 
 
 def dibujar(g, columna, colores, cortes, etiquetas, titulo, subtitulo, leyenda, fuente, archivo):
@@ -101,7 +113,7 @@ def dibujar(g, columna, colores, cortes, etiquetas, titulo, subtitulo, leyenda, 
 def mapa_pobreza(validacion):
     ind = pd.read_csv(_exigir(SALIDAS / "indicadores.csv"), dtype={"codigo": str})
     v = ind.query("anio == 2024 and nivel == 'departamento'")[["codigo", "pobreza_pct"]]
-    g = unir(v, "pobreza_pct", validacion)
+    g = unir(v, "pobreza_pct", validacion, "pobreza")
 
     ref = pd.read_csv(REFERENCIA, dtype={"ccdd": str}).rename(columns={"pobreza_pct": "referencia"})
     c = g[["FIRST_IDDP", "NOMBDEP", "pobreza_pct"]].merge(ref, left_on="FIRST_IDDP", right_on="ccdd")
@@ -131,7 +143,7 @@ def mapa_cambio(validacion):
         sys.exit("indicadores.csv no tiene 2019 y 2024. Ejecuta limpiar.py --anio 2019 y --anio 2024.")
     w = ind.query("nivel == 'departamento'").pivot(index="codigo", columns="anio", values="pobreza_pct")
     v = (w[2024] - w[2019]).rename("cambio_pp").reset_index()
-    g = unir(v, "cambio_pp", validacion)
+    g = unir(v, "cambio_pp", validacion, "cambio")
     colores = [DIVERGENTE[0], DIVERGENTE[1], DIVERGENTE[3], DIVERGENTE[4], DIVERGENTE[5]]
     cortes = [-100, -5, 0, 5, 10, 100]
     etiquetas = ["Bajó más de 5 pp", "Bajó hasta 5 pp", "Subió hasta 5 pp", "Subió 5 a 10 pp", "Subió más de 10 pp"]
@@ -146,12 +158,11 @@ def mapa_cambio(validacion):
 
 if __name__ == "__main__":
     pedido = (sys.argv[1:] or ["pobreza"])[0]
-    validacion = []
     if pedido not in ("pobreza", "cambio", "todos"):
         sys.exit("Opciones: pobreza, cambio o todos.")
-    if pedido in ("pobreza", "todos"):
-        mapa_pobreza(validacion)
-    if pedido in ("cambio", "todos"):
-        mapa_cambio(validacion)
-    escribir_validacion(validacion)
-    print("\n".join(validacion))
+    for mapa, funcion in (("pobreza", mapa_pobreza), ("cambio", mapa_cambio)):
+        if pedido in (mapa, "todos"):
+            validacion = []
+            funcion(validacion)
+            escribir_validacion(validacion, mapa)
+            print("\n".join(validacion))
