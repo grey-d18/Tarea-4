@@ -65,17 +65,16 @@ Series candidatas (verificadas en la API del BCRP):
 - [x] Respuestas esperadas verificadas con `evaluacion/verificar_respuestas.py` (API del BCRP directa + recálculo propio de ENAHO + cifras oficiales) → `verificacion_respuestas.csv`
 - [x] `evaluacion/protocolo.md`: tolerancias, criterios de calificación y condiciones de los modos A y B
 
-## Paso 6 – Ejecución del agente (Parte 3, 5 pts)
+## Paso 6 – Ejecución del agente (Parte 3, 5 pts) ✅
 - [x] Prompt listo en `evidencias_ia/integracion/prompt.md` (usa comparar_periodos, resumen, graficar_serie y las 3 Skills)
-- [ ] **Tú:** una sola sesión de Claude Code: ≥2 herramientas MCP + ≥2 Skills → guardar la conversación en `evidencias_ia/integracion/`
-- [ ] `informes/informe_final.md`: pregunta, metodología, ≥3 hallazgos, gráfico BCRP + gráfico ENAHO + mapa, interpretación, limitaciones, reproducibilidad
-- [ ] **Tú** verificas a mano ≥3 cifras (de ambas fuentes) y lo documentas
+- [x] Una sola sesión de Claude Code: ≥2 herramientas MCP + ≥2 Skills → guardar la conversación en `evidencias_ia/integracion/`
+- [x] `informes/informe_final.md`: pregunta, metodología, ≥3 hallazgos, gráfico BCRP + gráfico ENAHO + mapa, interpretación, limitaciones, reproducibilidad
+- [x] Verificación manual de 4 cifras (3 ENAHO + 1 BCRP) (de ambas fuentes) y lo documentas
 
-## Paso 7 – Evaluación Modo A vs. Modo B (Parte 4, 4 pts)
+## Paso 7 – Evaluación Modo A vs. Modo B (Parte 4, 4 pts) ✅
 - [x] `evaluacion/evaluar.py`: `claude -p` por pregunta, mismo modelo e instrucción; A sin herramientas, B con MCP + Skills; guarda cada sesión en `evaluacion/registros/` (probado con 2 preguntas en Haiku)
-- [ ] **Tú:** `uv run evaluacion/evaluar.py --modelo sonnet` y calificar a mano la interpretación de las 2 combinadas
-- [ ] Modo A (sin MCP ni Skills) y Modo B (con ambos), cada pregunta en sesión nueva, mismo modelo
-- [ ] `evaluacion/resultados.csv` y `evaluacion/comparacion.md`
+- [x] Ejecutado con Sonnet (7 nov): Modo A 2/10 correctas, Modo B 10/10; interpretaciones de las combinadas calificadas a mano (cumplen)
+- [x] `evaluacion/resultados.csv`, `evaluacion/comparacion.md` y `evaluacion/registros/`
 
 ## Paso 8 – Cierre
 - [ ] README completo (12 secciones)
