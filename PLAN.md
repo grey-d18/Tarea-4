@@ -59,9 +59,10 @@ Series candidatas (verificadas en la API del BCRP):
   - «Grafica la pobreza urbana y rural con la ENAHO 2024» (activación por lenguaje natural)
   - Borrar `salidas/indicadores.csv` y pedir «Haz un mapa de la pobreza monetaria por departamento con ENAHO 2024» (debe correr limpieza y luego mapa)
 
-## Paso 5 – Preguntas de evaluación (Parte 4, antes de probar el agente)
-- [ ] `evaluacion/preguntas.csv`: 4 BCRP + 4 ENAHO + 2 combinadas, con respuesta esperada y **tolerancia fijada antes**
-- [ ] Respuestas esperadas verificadas en la web del BCRP / cálculo independiente (no con el propio agente)
+## Paso 5 – Preguntas de evaluación (Parte 4, antes de probar el agente) ✅
+- [x] `evaluacion/preguntas.csv`: 4 BCRP + 4 ENAHO + 2 combinadas, con respuesta esperada y **tolerancia fijada antes**
+- [x] Respuestas esperadas verificadas con `evaluacion/verificar_respuestas.py` (API del BCRP directa + recálculo propio de ENAHO + cifras oficiales) → `verificacion_respuestas.csv`
+- [x] `evaluacion/protocolo.md`: tolerancias, criterios de calificación y condiciones de los modos A y B
 
 ## Paso 6 – Ejecución del agente (Parte 3, 5 pts)
 - [ ] Una sola sesión de Claude Code: ≥2 herramientas MCP + ≥2 Skills → guardar la conversación en `evidencias_ia/integracion/`

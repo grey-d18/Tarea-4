@@ -1,0 +1,13 @@
+id,valor_verificado,procedimiento,valor_oficial,fuente_oficial,coincide
+bcrp_inflacion_dic24,1.9663,https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01273PM/json/2024-12/2024-12,,,
+bcrp_pbi_2024,3.5153,https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PM04923AA/json/2024/2024,,,
+bcrp_pbi_abr20,-39.277,https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01728AM/json/2020-4/2020-4,,,
+bcrp_pbi_2024_vs_2019,7.1373,promedio de 12 meses: https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01770AM/json/2019-1/2019-12 y https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01770AM/json/2024-1/2024-12,,,
+enaho_pobreza_2024,27.58,"sumaria 2024, pobreza<=2, ponderado factor07*mieperho",27.6,Consigna de la Tarea 4 (INEI),True
+enaho_rural_2024,39.3,"sumaria 2024, pobreza<=2, ponderado factor07*mieperho, estrato>5",39.3,Consigna de la Tarea 4 (INEI),True
+enaho_lima_2024,28.21,"sumaria 2024, pobreza<=2, ponderado factor07*mieperho, dominio==8",28.2,README Sesión 16,True
+enaho_cajamarca_2024,45.01,"sumaria 2024, pobreza<=2, ponderado factor07*mieperho, ubigeo[:2]=='06'",45.0,referencias/pobreza_departamento_2024.csv (Sesión 16),True
+mix_pobreza_vs_pbi,7.39,"pobreza 2024 − 2019 (sumarias, mismo método)",7.4,INEI: 20.2 % (2019) y 27.6 % (2024),True
+mix_pobreza_vs_pbi__2,7.1373,igual que bcrp_pbi_2024_vs_2019,,,
+mix_urbana_vs_pbi,10.23,pobreza urbana (estrato<=5) 2024 − 2019,10.2,INEI: urbana 14.6 % (2019) y 24.8 % (2024),True
+mix_urbana_vs_pbi__2,3.5153,https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PM04923AA/json/2024/2024,,,
